@@ -9,6 +9,7 @@
  由于文章中的变量名称较为专业，整理数据时仅简单粗暴的将变量名称设为x1,x2...y1,y2<br>
  才疏学浅，如有错误和不足之处，欢迎各位老师给予批评、指正以及补充<br>
 
- 运算过程及结果如下
+ 运算过程及结果如下<br>
+ <iframe src="https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html" ></iframe>
  
- <a href='https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html'>33</a>
+ <a href='https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html'>https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html</a>
