@@ -10,6 +10,6 @@
  才疏学浅，如有错误和不足之处，欢迎各位老师给予批评、指正以及补充<br>
 
  运算过程及结果如下<br>
- <iframe src="https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html" ></iframe>
+ <iframe src="https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html" width="700px"  frameborder="0" scrolling="no"></iframe>
  
  <a href='https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html'>https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html</a>
