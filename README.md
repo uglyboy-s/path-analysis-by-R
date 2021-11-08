@@ -1,5 +1,5 @@
 # path analysis by R
- R语言通径分析,write by 小芊<br>
+ R语言通径分析，write by 小芊<br>
  （最近学习到了一个新的名词通径分析，通过这篇文章学习了一下，正好也学习了一下R语言）
 
 
