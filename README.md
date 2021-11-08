@@ -10,5 +10,5 @@
  才疏学浅，如有错误和不足之处，欢迎各位老师给予批评、指正以及补充<br>
 
  运算过程及结果如下
- <iframe src="https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html" width="700px" height="500px" frameborder="0" scrolling="no"></iframe>
- https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html
+ 
+ <a href='https://uglyboy-s.github.io/path-analysis-by-R/show.nb.html'>33</a>
