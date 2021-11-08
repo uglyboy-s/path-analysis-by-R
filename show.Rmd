@@ -1,0 +1,100 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+首先，导入数据
+```{r}
+library(openxlsx)
+mydata<-read.xlsx("ppdata2.xlsx")
+```
+
+
+先直观的看一下各变量间是否存在线性相关关系
+```{r}
+pairs(~x1+x2+x3+x4+x5+x6+y1+y2,data=mydata)
+```
+可以很明显的看出x3与x4有很强烈的线性相关关系，x1与x5似乎也线性相关。<br />
+我们做逐步回归看一下。
+```{r}
+lm1 = lm(y1~1,data=mydata)
+step(lm1,scope = list(upper=~x1+x2+x3+x4+x5+x6,lower=~1),direction = "forward")
+```
+结果显示选择x5,x3,x6,x1进行回归AIC最小，效果最好。<br />
+但文章中选择了用x5,x6,x3进行回归，效果也很好。<br />
+按文章中选择了x5,x6,x3,进行回归。
+```{r}
+lm(y1~x5+x3+x6,data = mydata)
+```
+
+计算结果与文章中一致。y1=90.424-0.236x5-1.747x3+2.039x6  <br />
+接下来进行通径分析。<br />
+通径分析就是将自变量与因变量的相关系数分解为直接通径系数和间接通径系数。<br />
+例如可以将x5与y1的相关系数分解为x5与y1的直接通径系数（x5直接对y1的影响）+x5与y1的间接通径系数（x5通过影响x3和x6再对y1的影响）。x5通过影响x3的间接通径系数就等于x5与x3的相关系数（r53）乘以x3与y1的直接通径系数（p3）。又因为直接通径系数加间接通径系数等于x5与y1的相关系数。因此我们可以的到以下方程组。
+
+r5y =  1  * p5 + r35 * p3 + r56 * p6<br />
+r3y = r53 * P5 +  1 *  p3 + r36 * p6<br />
+r6y = r56 * p5 + r36 * p3 +  1 *  p6<br />
+相关系数可以由原数据算出，从而可以解出直接通径系数p5，p3，p6。<br />
+另外，直接通径系数还等于标准化后的线性回归系数。因此，也可以通过标准化后进行线性回归算出回归系数即为直接通径系数。<br />
+上边介绍了两种求直接通径系数的方法。来分别试一下<br />
+先用标准化后的线性回归<br />
+```{r}
+tmp = data.frame(mydata$x5,mydata$x3,mydata$x6,mydata$y1)
+tmp_scale = as.data.frame(scale(tmp))
+names(tmp_scale)=c("x5","x3","x6","y1")
+lm(y1~x5+x3+x6,data = tmp_scale)
+```
+x5的直接通径系数p5=-1.953<br />
+x3的直接通径系数p3=-1.43<br />
+x6的直接通径系数p6=0.5871<br />
+与文章中一致<br />
+还可以通过解方程的方式计算直接通径系数
+```{r}
+tmp_x=tmp[-4]
+tmp_y = tmp[4]
+solve(cor(tmp)[1:3,1:3],cor(tmp)[1:3,4])
+```
+计算结果一致。<br />
+除此之外，还可以用agricolae来直接计算直接通径系数和间接通径系数。<br />
+path.analysis(corx,cory) 传入x的相关系数矩阵和x与y的相关系数
+```{r}
+library(agricolae)
+cor_tmp_x=cor(tmp_x)  
+cor_tmp_y=cor(tmp_x,tmp_y)
+pa = path.analysis(cor_tmp_x,cor_tmp_y) 
+pa = pa$Coeff
+```
+x5通过x3的间接通径系数为1.1429<br />
+x5通过x6的间接通径系数为-0.0424<br />
+与文中一致<br />
+以上，介绍了三种计算直接通径系数的方式，分别是<br />
+1.解方程组<br />
+2.标准化后的线性回归系数<br />
+3.直接用agricolae包来计算直接通径系数和间接通径系数。<br />
+接下来，我们来画出通径图
+```{r}
+library(diagram)
+M = matrix(nrow = 4, ncol = 4, byrow = TRUE, data = 0)
+M[4,1]=pa[1,1]
+M[4,2]=pa[2,2]
+M[4,3]=pa[3,3]
+M[2,1]=M[1,2]=cor(tmp)[1,2]
+M[2,3]=M[3,2]=cor(tmp)[2,3]
+M[1,3]=M[3,1]=cor(tmp)[1,3]
+clr=matrix(nrow = 4, ncol = 4, byrow = TRUE, data = 0)
+clr[4,1]='green'
+clr[4,2]='blue'
+clr[4,3]='red'
+clr[2,1]=clr[1,2]='orange'
+clr[2,3]=clr[3,2]='purple'
+clr[1,3]=clr[3,1]='gray'
+lwd = abs(M)*3
+names(tmp)=c("x5","x3","x6","y1")
+plotmat(M,relsize=1,pos=c(1,2,1), arr.lcol=clr,arr.tcol=clr,arr.lwd=lwd,curve = 0.2, name = colnames(tmp),lwd = 1, box.lwd = 2, cex.txt = 0.8, shadow.size=0,arr.type="simple",box.type = "square", box.prop = 0.5,box.size=0.05,arr.pos = 0.7, main = "通径图")
+```
+
+
+
+
+
+
